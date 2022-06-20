@@ -2,12 +2,8 @@ package com.miola.endroits;
 
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miola.reviews.ReviewModel;
-import com.miola.reviews.ReviewRepository;
-import com.miola.reviews.ReviewService;
 import com.miola.villes.VilleModel;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -15,7 +11,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -75,4 +70,6 @@ public class EndroitModel {
         this.reviews = reviews;
         this.videoLink = videoLink;
     }
+
+
 }

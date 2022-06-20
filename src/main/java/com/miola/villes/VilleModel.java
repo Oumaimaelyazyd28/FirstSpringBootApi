@@ -1,6 +1,5 @@
 package com.miola.villes;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.miola.endroits.EndroitModel;
 import lombok.*;
 
@@ -33,4 +32,6 @@ public class VilleModel {
                 ", villename='" + villename + '\'' +
                 '}';
     }
+
+
 }
