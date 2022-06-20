@@ -1,6 +1,7 @@
 package com.miola.endroits;
 
 
+import com.miola.dto.EndroitDto;
 import com.miola.dto.ResponseWithArray;
 
 import com.miola.dto.UserDetailsWithoutPwd;
@@ -40,6 +41,7 @@ public class EndroitController {
     private ReviewService reviewService;
     @Autowired
     private UserController userController;
+
 
 
 
@@ -88,10 +90,11 @@ public class EndroitController {
 
     //afficher un endroit à partir de son id
     @GetMapping(path="/{id}")
-    public ResponseEntity<EndroitModel> getEndroitById(@PathVariable("id") int id) {
+    public ResponseEntity<EndroitDto> getEndroitById(@PathVariable("id") int id) {
         EndroitModel endroit = endroitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Endroit with id = " + id));
-        return new ResponseEntity<>(endroit, HttpStatus.OK);
+        EndroitDto endroitDto = new EndroitDto(endroit,endroit.getVille().getId(),endroit.getVille().getVillename());
+        return new ResponseEntity<>(endroitDto, HttpStatus.OK);
     }
 
 
