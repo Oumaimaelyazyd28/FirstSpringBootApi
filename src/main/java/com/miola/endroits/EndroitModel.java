@@ -44,6 +44,4 @@ public class EndroitModel {
     private List<ReviewModel> reviews;
 
 
-
-
 }

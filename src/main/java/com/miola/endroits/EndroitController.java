@@ -1,16 +1,11 @@
 package com.miola.endroits;
 
 
-import com.miola.dto.EndroitDto;
 import com.miola.dto.ResponseWithArray;
 
-import com.miola.dto.UserDetailsWithoutPwd;
 import com.miola.exceptions.ResourceNotFoundException;
 import com.miola.responseMessages.ControllerMessages;
-import com.miola.responseMessages.UtilMessages;
 import com.miola.reviews.ReviewModel;
-import com.miola.reviews.ReviewService;
-import com.miola.users.UserController;
 import com.miola.villes.VilleModel;
 import com.miola.villes.VilleRepository;
 import com.miola.dto.ResponseWithRecordCount;
@@ -19,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.websocket.server.PathParam;
@@ -33,15 +27,12 @@ public class EndroitController {
 
     @Autowired
     private EndroitService endroitService;
+
     @Autowired
     private EndroitRepository endroitRepository;
+
     @Autowired
     private VilleRepository villeRepository;
-    @Autowired
-    private ReviewService reviewService;
-    @Autowired
-    private UserController userController;
-
 
 
 
@@ -67,7 +58,6 @@ public class EndroitController {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
-    //pagination
     @GetMapping(path = "/all/pagination")
     public ResponseEntity<ResponseWithRecordCount> getAllEndroitsWithPagination(
             @RequestParam(name = "offset") int offset,
@@ -77,7 +67,6 @@ public class EndroitController {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
-    //pagination and sorting
     @GetMapping(path = "/all/paginationAndSorting")
     public ResponseEntity<ResponseWithRecordCount> getAllEndroitsWithPaginationAndSorting(
             @RequestParam(name = "offset") int offset,
@@ -88,13 +77,20 @@ public class EndroitController {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
-    //afficher un endroit à partir de son id
+
+
+
+    /*@PostMapping(path = "")
+    public ResponseEntity<Object> addEndroit(@Validated @RequestBody EndroitModel endroit) {
+        endroitService.addOne(endroit);
+        return new ResponseEntity<>(endroit, HttpStatus.CREATED);
+    }*/
+
     @GetMapping(path="/{id}")
-    public ResponseEntity<EndroitDto> getEndroitById(@PathVariable("id") int id) {
+    public ResponseEntity<EndroitModel> getEndroitById(@PathVariable("id") int id) {
         EndroitModel endroit = endroitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found Endroit with id = " + id));
-        EndroitDto endroitDto = new EndroitDto(endroit,endroit.getVille().getId(),endroit.getVille().getVillename());
-        return new ResponseEntity<>(endroitDto, HttpStatus.OK);
+        return new ResponseEntity<>(endroit, HttpStatus.OK);
     }
 
 
@@ -106,34 +102,21 @@ public class EndroitController {
         return new ResponseEntity<>(endroit.getReviews(), HttpStatus.OK);
     }
 
-    //Modifier un endroit
-    @PostMapping(path="/{id}")
+    @PutMapping(path="/{id}")
     public ResponseEntity<EndroitModel> updateEndroit(@Validated @PathVariable("id") int id, @RequestBody EndroitModel endroiRequest) {
         EndroitModel endroit = endroitRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("EndroitId " + id + "not found"));
         endroit.setName(endroiRequest.getName());
-        endroit.setDescription(endroiRequest.getDescription());
-        endroit.setImage(endroiRequest.getImage());
+        endroit.setVille(endroiRequest.getVille());
         return new ResponseEntity<>(endroitRepository.save(endroit), HttpStatus.OK);
     }
 
-    //Supprimer un endroit
     @DeleteMapping(path="/{id}")
     public ResponseEntity<HttpStatus> deleteEndroit(@PathVariable("id") int id) {
         endroitRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //Ajouter un review à un endroit
-    @PostMapping(path = "/{id}/reviews")
-    public ResponseEntity<ReviewModel> addReviewToEndroit(@Validated @PathVariable("id") int id,@RequestBody ReviewModel review){
-        EndroitModel endroit = endroitRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found Endroit with id = " + id));
-        Optional<UserModel> user = userController.currentUser();
-        ReviewModel _review = reviewService.save(new ReviewModel(review.getId(), review.getContenu(),endroit,user.get()));
-        return new ResponseEntity<>(_review, HttpStatus.CREATED);
-
-    }
 
     /*// search endroits by ville
     @GetMapping(path = "/ville/{ville}")
@@ -160,7 +143,7 @@ public class EndroitController {
                 return new ResponseEntity<>(e, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-    }
+    }*/
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<Object> updateEndroit(@Validated @RequestBody EndroitModel endroit){
@@ -183,8 +166,6 @@ public class EndroitController {
             return HttpStatus.OK;
         } else
             return HttpStatus.BAD_REQUEST;
-    }*/
-
-
+    }
 
 }
